@@ -143,12 +143,17 @@ namespace AssetStudioGUI
             openFileDialog1.InitialDirectory = openDirectoryBackup;
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                ResetForm();
-                openDirectoryBackup = Path.GetDirectoryName(openFileDialog1.FileNames[0]);
-                assetsManager.SpecifyUnityVersion = specifyUnityVersion.Text;
-                await Task.Run(() => assetsManager.LoadFiles(openFileDialog1.FileNames));
-                BuildAssetStructures();
+                _openFiles(openFileDialog1.FileNames);
             }
+        }
+
+        private async void _openFiles(string[] files)
+        {
+            ResetForm();
+            openDirectoryBackup = Path.GetDirectoryName(files[0]);
+            assetsManager.SpecifyUnityVersion = specifyUnityVersion.Text;
+            await Task.Run(() => assetsManager.LoadFiles(files));
+            BuildAssetStructures();
         }
 
         private async void loadFolder_Click(object sender, EventArgs e)
@@ -2044,6 +2049,15 @@ namespace AssetStudioGUI
         private void toolStripMenuItem15_Click(object sender, EventArgs e)
         {
             logger.ShowErrorMessage = toolStripMenuItem15.Checked;
+        }
+
+        private void AssetStudioGUIForm_Load(object sender, EventArgs e)
+        {
+            string[] argv = Environment.GetCommandLineArgs();
+            if (argv.Length > 1) {
+                argv = argv.Where((item, index) => index != 0).ToArray();
+            }
+            _openFiles(argv);
         }
 
         private void glControl1_MouseWheel(object sender, MouseEventArgs e)
