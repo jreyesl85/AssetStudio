@@ -408,7 +408,7 @@ namespace AssetStudioGUI
                                 exportPath = Path.Combine(savePath, Path.GetFileName(asset.SourceFile.originalPath) + "_export", asset.SourceFile.fileName);
                             }
                             break;
-						case 3: //container path
+						case 3: //container full path
                             if (!string.IsNullOrEmpty(asset.Container))
                             {
                                 exportPath = Path.Combine(savePath, Path.GetDirectoryName(asset.Container), Path.GetFileNameWithoutExtension(asset.Container));

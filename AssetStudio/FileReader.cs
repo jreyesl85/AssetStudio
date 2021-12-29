@@ -12,7 +12,7 @@ namespace AssetStudio
         private static readonly byte[] gzipMagic = { 0x1f, 0x8b };
         private static readonly byte[] brotliMagic = { 0x62, 0x72, 0x6F, 0x74, 0x6C, 0x69 };
 
-        public FileReader(string path) : this(path, File.Open(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) { }
+        public FileReader(string path) : this(path, File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite)) { }
 
         public FileReader(string path, Stream stream) : base(stream, EndianType.BigEndian)
         {
@@ -23,7 +23,20 @@ namespace AssetStudio
 
         private FileType CheckFileType()
         {
-            var signature = this.ReadStringToNull(20);
+            var signature = this.ReadStringToNull(100);
+            var position = signature.IndexOf("Unity");
+            if (position > 0)
+            {
+                byte[] data = new byte[BaseStream.Length - position];
+                Position = position;
+                BaseStream.Read(data, 0, data.Length);
+                Position = 0;
+                BaseStream.Write(data, 0, data.Length);
+                BaseStream.SetLength(data.Length);
+                Position = 0;
+                signature = this.ReadStringToNull(100);
+            }
+            
             Position = 0;
             switch (signature)
             {
