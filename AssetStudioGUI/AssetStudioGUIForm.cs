@@ -2053,11 +2053,11 @@ namespace AssetStudioGUI
 
         private void AssetStudioGUIForm_Load(object sender, EventArgs e)
         {
-            string[] argv = Environment.GetCommandLineArgs();
-            if (argv.Length > 1) {
-                argv = argv.Where((item, index) => index != 0).ToArray();
+            var argv = Environment.GetCommandLineArgs();
+            if (argv.Length > 0 && argv[0].Equals(Application.ExecutablePath)) { 
+                argv = argv.Skip(1).ToArray();
             }
-            _openFiles(argv);
+            if(argv.Length > 0) _openFiles(argv);
         }
 
         private void glControl1_MouseWheel(object sender, MouseEventArgs e)
